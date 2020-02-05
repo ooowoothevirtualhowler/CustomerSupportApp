@@ -35,8 +35,12 @@ public class TicketController {
     }
 
     @RequestMapping(value = "/tickets/storeTickets", method = RequestMethod.GET)
-    public String showStoreTicket(Model model) {
-        model.addAttribute("ticket", new TicketEntity());
+    public String showStoreTicket(Model model, TicketEntity ticket) {
+        if (ticket != null) {
+            model.addAttribute("ticket", ticket);
+        } else {
+            model.addAttribute("ticket", new TicketEntity());
+        }
         return "tickets/storeTicket";
     }
 
@@ -52,14 +56,19 @@ public class TicketController {
 
     @RequestMapping(value = "/tickets/edit/{id}", method = RequestMethod.GET)
     public String editTicket(Model model,@PathVariable("id") Long id) {
-        // Code here
-        return "redirect:/"; //Remove this line
+        TicketEntity ticket = ticketService.findById(id);
+        if (ticket != null) {
+            return this.showStoreTicket(model, ticket);
+        }
+        return "redirect:/";
     }
 
     @RequestMapping(value = "/tickets/delete/{id}", method = RequestMethod.GET)
     public String deleteTicket(@PathVariable("id") Long id) {
-        // Code here
+        TicketEntity ticket = ticketService.findById(id);
+        if (ticket != null) {
+            ticketService.deleteById(id);
+        }
         return "redirect:/";
     }
-
 }
